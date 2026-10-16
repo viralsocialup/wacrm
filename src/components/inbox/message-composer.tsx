@@ -629,7 +629,7 @@ export function MessageComposer({
           </Button>
         </div>
       ) : (
-        <div className="flex flex-wrap items-end gap-2 sm:flex-nowrap">
+        <div className="flex items-end gap-2">
           {/* Attach menu — photo / video / document / voice. */}
           <DropdownMenu>
             <DropdownMenuTrigger
@@ -641,7 +641,7 @@ export function MessageComposer({
                     ? undefined
                     : t("attachMedia")
               }
-              className="inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-md p-0 text-muted-foreground hover:text-foreground disabled:cursor-not-allowed disabled:opacity-50"
+              className="inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-md p-0 text-muted-foreground hover:text-foreground disabled:cursor-not-allowed disabled:opacity-50 max-sm:hidden"
             >
               {busy ? (
                 <Loader2 className="h-4 w-4 animate-spin" />
@@ -681,7 +681,7 @@ export function MessageComposer({
                     ? undefined
                     : t("moreActions")
               }
-              className="inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-md p-0 text-muted-foreground hover:text-foreground disabled:cursor-not-allowed disabled:opacity-50"
+              className="inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-md p-0 text-muted-foreground hover:text-foreground disabled:cursor-not-allowed disabled:opacity-50 max-sm:hidden"
             >
               <Plus className="h-4 w-4" />
             </DropdownMenuTrigger>
@@ -703,7 +703,7 @@ export function MessageComposer({
             canAct={!readOnly}
             gateReason="send messages"
             title={readOnly ? undefined : t("sendTemplate")}
-            className="h-9 w-9 shrink-0 p-0 text-muted-foreground hover:text-foreground"
+            className="h-9 w-9 shrink-0 p-0 text-muted-foreground hover:text-foreground max-sm:hidden"
             onClick={onOpenTemplates}
           >
             <LayoutTemplate className="h-4 w-4" />
@@ -716,7 +716,7 @@ export function MessageComposer({
             gateReason="send messages"
             disabled={drafting}
             title={readOnly ? undefined : t("draftWithAI")}
-            className="h-9 w-9 shrink-0 p-0 text-muted-foreground hover:text-primary"
+            className="h-9 w-9 shrink-0 p-0 text-muted-foreground hover:text-primary max-sm:hidden"
             onClick={handleDraft}
           >
             {drafting ? (
@@ -725,6 +725,60 @@ export function MessageComposer({
               <Sparkles className="h-4 w-4" />
             )}
           </GatedButton>
+
+          {/* Phone-only "+" menu (WhatsApp style): every action in one place so the
+              message box can use the full row. Desktop keeps the separate icons above. */}
+          <DropdownMenu>
+            <DropdownMenuTrigger
+              disabled={busy || readOnly}
+              title={readOnly ? t("readOnlyTitle") : t("moreActions")}
+              className="inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-full text-muted-foreground hover:bg-muted hover:text-foreground disabled:cursor-not-allowed disabled:opacity-50 sm:hidden"
+            >
+              {busy ? (
+                <Loader2 className="h-6 w-6 animate-spin" />
+              ) : (
+                <Plus className="h-6 w-6" />
+              )}
+            </DropdownMenuTrigger>
+            <DropdownMenuContent side="top" align="start" className="min-w-56 border-border bg-popover">
+              <DropdownMenuItem disabled={inputsDisabled} onClick={() => imageInputRef.current?.click()}>
+                <ImageIcon className="mr-2 h-4 w-4" />
+                {t("photo")}
+              </DropdownMenuItem>
+              <DropdownMenuItem disabled={inputsDisabled} onClick={() => videoInputRef.current?.click()}>
+                <Video className="mr-2 h-4 w-4" />
+                {t("video")}
+              </DropdownMenuItem>
+              <DropdownMenuItem disabled={inputsDisabled} onClick={() => documentInputRef.current?.click()}>
+                <FileText className="mr-2 h-4 w-4" />
+                {t("document")}
+              </DropdownMenuItem>
+              <DropdownMenuItem disabled={inputsDisabled} onClick={() => void startRecording()}>
+                <Mic className="mr-2 h-4 w-4" />
+                {t("voiceNote")}
+              </DropdownMenuItem>
+              <DropdownMenuItem onClick={onOpenTemplates}>
+                <LayoutTemplate className="mr-2 h-4 w-4" />
+                {t("sendTemplate")}
+              </DropdownMenuItem>
+              <DropdownMenuItem disabled={inputsDisabled} onClick={() => setQuickReplyOpen(true)}>
+                <Zap className="mr-2 h-4 w-4" />
+                {t("quickReplies")}
+              </DropdownMenuItem>
+              <DropdownMenuItem disabled={inputsDisabled} onClick={() => openInteractiveBuilder()}>
+                <MessageSquareDashed className="mr-2 h-4 w-4" />
+                {t("interactiveMessage")}
+              </DropdownMenuItem>
+              <DropdownMenuItem disabled={drafting} onClick={handleDraft}>
+                {drafting ? (
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                ) : (
+                  <Sparkles className="mr-2 h-4 w-4" />
+                )}
+                {t("draftWithAI")}
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
 
           <textarea
             ref={textareaRef}
@@ -745,7 +799,7 @@ export function MessageComposer({
             // The placeholder text also surfaces the read-only state.
             title={readOnly ? t("readOnlyTitle") : undefined}
             className={cn(
-              "order-first min-h-12 w-full basis-full resize-none rounded-xl border border-border bg-muted px-4 py-3 text-base text-foreground placeholder-muted-foreground outline-none transition-colors focus:border-primary/50 sm:order-none sm:min-h-0 sm:w-auto sm:flex-1 sm:basis-auto sm:py-2.5 sm:text-sm",
+              "min-h-11 flex-1 resize-none rounded-3xl border border-border bg-muted px-4 py-2.5 text-base text-foreground placeholder-muted-foreground outline-none transition-colors focus:border-primary/50 sm:min-h-0 sm:rounded-xl sm:text-sm",
               (sessionExpired || readOnly) && "cursor-not-allowed opacity-50"
             )}
           />
@@ -756,7 +810,7 @@ export function MessageComposer({
             gateReason="send messages"
             disabled={!text.trim() || sessionExpired || sending}
             onClick={handleSend}
-            className="ml-auto h-10 w-10 shrink-0 bg-primary p-0 hover:bg-primary/90 disabled:opacity-40 sm:ml-0 sm:h-9 sm:w-9"
+            className="h-11 w-11 shrink-0 rounded-full bg-primary p-0 hover:bg-primary/90 disabled:opacity-40 sm:h-9 sm:w-9 sm:rounded-md"
           >
             <Send className="h-4 w-4" />
           </GatedButton>
