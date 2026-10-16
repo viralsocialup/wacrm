@@ -6,6 +6,7 @@ import Script from "next/script";
 import "./globals.css";
 import { ThemeProvider } from "@/hooks/use-theme";
 import { ThemedToaster } from "@/components/themed-toaster";
+import { PwaRegister } from "@/components/pwa-register";
 import {
   DEFAULT_MODE,
   DEFAULT_THEME,
@@ -32,6 +33,12 @@ export const metadata: Metadata = {
   },
   icons: {
     icon: [{ url: "/icon" }],
+    apple: [{ url: "/pwa-icon/180" }],
+  },
+  appleWebApp: {
+    capable: true,
+    title: "wacrm",
+    statusBarStyle: "black-translucent",
   },
   formatDetection: {
     email: false,
@@ -43,6 +50,7 @@ export const metadata: Metadata = {
 export const viewport: Viewport = {
   themeColor: "#020617",
   colorScheme: "dark light",
+  viewportFit: "cover",
 };
 
 // Inline boot script — runs before React hydrates so the user's
@@ -112,6 +120,7 @@ export default async function RootLayout({
           <ThemeProvider>
             {children}
             <ThemedToaster />
+            <PwaRegister />
           </ThemeProvider>
         </NextIntlClientProvider>
       </body>
