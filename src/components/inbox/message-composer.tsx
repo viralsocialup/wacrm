@@ -217,7 +217,7 @@ export function MessageComposer({
     if (!el) return;
     el.style.height = "auto";
     // Max 4 lines (~96px)
-    el.style.height = `${Math.min(el.scrollHeight, 96)}px`;
+    el.style.height = `${Math.min(el.scrollHeight, 128)}px`;
   }, []);
 
   const handleSend = useCallback(async () => {
@@ -536,7 +536,7 @@ export function MessageComposer({
   // ---- Render --------------------------------------------------------
 
   return (
-    <div className="border-t border-border bg-card p-3">
+    <div className="border-t border-border bg-card p-3 pb-[max(0.75rem,env(safe-area-inset-bottom))]">
       {replyTo && (
         <div className="mb-2">
           <ReplyQuote
@@ -629,7 +629,7 @@ export function MessageComposer({
           </Button>
         </div>
       ) : (
-        <div className="flex items-end gap-2">
+        <div className="flex flex-wrap items-end gap-2 sm:flex-nowrap">
           {/* Attach menu — photo / video / document / voice. */}
           <DropdownMenu>
             <DropdownMenuTrigger
@@ -745,7 +745,7 @@ export function MessageComposer({
             // The placeholder text also surfaces the read-only state.
             title={readOnly ? t("readOnlyTitle") : undefined}
             className={cn(
-              "flex-1 resize-none rounded-xl border border-border bg-muted px-4 py-2.5 text-sm text-foreground placeholder-muted-foreground outline-none transition-colors focus:border-primary/50",
+              "order-first min-h-12 w-full basis-full resize-none rounded-xl border border-border bg-muted px-4 py-3 text-base text-foreground placeholder-muted-foreground outline-none transition-colors focus:border-primary/50 sm:order-none sm:min-h-0 sm:w-auto sm:flex-1 sm:basis-auto sm:py-2.5 sm:text-sm",
               (sessionExpired || readOnly) && "cursor-not-allowed opacity-50"
             )}
           />
@@ -756,7 +756,7 @@ export function MessageComposer({
             gateReason="send messages"
             disabled={!text.trim() || sessionExpired || sending}
             onClick={handleSend}
-            className="h-9 w-9 shrink-0 bg-primary p-0 hover:bg-primary/90 disabled:opacity-40"
+            className="ml-auto h-10 w-10 shrink-0 bg-primary p-0 hover:bg-primary/90 disabled:opacity-40 sm:ml-0 sm:h-9 sm:w-9"
           >
             <Send className="h-4 w-4" />
           </GatedButton>
@@ -767,7 +767,7 @@ export function MessageComposer({
           `items-end` buttons below the textarea. Indented to line up
           under the textarea left edge. */}
       {!draft && !recording && (
-        <p className="mt-1 pl-[5.5rem] text-[10px] text-muted-foreground">
+        <p className="mt-1 hidden pl-[5.5rem] text-[10px] text-muted-foreground sm:block">
           {t("draftHint")}
         </p>
       )}
